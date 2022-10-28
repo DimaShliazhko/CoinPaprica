@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,7 +23,6 @@ import com.example.coinpaprica.common.Constant.COIN_ID
 import com.example.coinpaprica.navigation.Screen
 import com.example.coinpaprica.presantation.coin_list.CoinListEvent
 import com.example.coinpaprica.presantation.coin_list.CoinListViewModel
-import com.example.coinpaprica.presantation.ui.theme.Shapes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -65,42 +65,43 @@ fun CoinListScreen(
                 }
             }
 
-            if (!listState.isScrollInProgress ){
-                    Surface(
+            if (!listState.isScrollInProgress) {
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                        .shadow(20.dp, RoundedCornerShape(20.dp)),
+                    onClick = {
+                        scope.launch { listState.animateScrollToItem(0) }
+                    },
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(width = 1.dp, color = Color.Red),
+                    color = Color.DarkGray.copy(alpha = 0.7f)
+                ) {
+                    Row(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp),
-                        onClick = {
-                            scope.launch { listState.animateScrollToItem(0) }
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(width = 1.dp, color = Color.Red),
-                        color = Color.DarkGray.copy(alpha = 0.7f)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
+                            .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
 
-                            ) {
-                            Icon(
-                                imageVector = Icons.Default.Upgrade,
-                                contentDescription = "",
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "UP")
-                        }
+                        ) {
+                        Icon(
+                            imageVector = Icons.Default.Upgrade,
+                            contentDescription = "",
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "UP")
                     }
                 }
+            }
 
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.Center)
-                    )
-                }
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .align(Alignment.Center)
+                )
+            }
             if (!state.error.isNullOrEmpty()) {
                 Text(text = state.error)
             }

@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.coinpaprica.common.Constant.BASE_URL
 import com.example.coinpaprica.data.CoinApi
 import com.example.coinpaprica.data.repository.CoinRepositoryImpl
+import com.example.coinpaprica.data.sensor.AccelerometerSensor
 import com.example.coinpaprica.data.sensor.LightSensor
 import com.example.coinpaprica.data.sensor.MeasurableSensor
 import com.example.coinpaprica.domain.repository.CoinRepository
@@ -52,5 +53,11 @@ object AppModule {
     @Provides
     fun provideLightSensor(app: Application): MeasurableSensor {
        return LightSensor(app)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAccelerometerSensor(app: Application): AccelerometerSensor {
+        return AccelerometerSensor(app)
     }
 }

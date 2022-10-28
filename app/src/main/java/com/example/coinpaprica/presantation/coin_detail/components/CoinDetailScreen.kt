@@ -14,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +47,13 @@ fun CoinDetailScreen(
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Center),
+                        .align(Center)
+                     //   .rotate(degrees = state.sides)
+                        .graphicsLayer {
+                            rotationX =  state.upDown
+                            rotationY =  state.sides
+                            cameraDistance = 12f * density
+                        },
                     alpha = 0.5f,
                     contentScale = ContentScale.Crop,
                     painter = rememberAsyncImagePainter(coin.logo),

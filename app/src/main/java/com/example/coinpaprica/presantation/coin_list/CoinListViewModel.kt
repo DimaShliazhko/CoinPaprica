@@ -3,7 +3,7 @@ package com.example.coinpaprica.presantation.coin_list
 import androidx.lifecycle.viewModelScope
 import com.example.coinpaprica.base.BaseViewModel
 import com.example.coinpaprica.common.Results
-import com.example.coinpaprica.data.sensor.LightSensor
+
 import com.example.coinpaprica.data.sensor.MeasurableSensor
 import com.example.coinpaprica.domain.use_case.CoinUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
