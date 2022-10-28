@@ -1,16 +1,17 @@
 package com.example.coinpaprica.presantation.coin_list.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Upgrade
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +22,10 @@ import com.example.coinpaprica.common.Constant.COIN_ID
 import com.example.coinpaprica.navigation.Screen
 import com.example.coinpaprica.presantation.coin_list.CoinListEvent
 import com.example.coinpaprica.presantation.coin_list.CoinListViewModel
+import com.example.coinpaprica.presantation.ui.theme.Shapes
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CoinListScreen(
@@ -29,10 +33,18 @@ fun CoinListScreen(
     viewModel: CoinListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        backgroundColor = Color.Gray,
+        backgroundColor = if (state.isDark) {
+            Color.Gray
+        } else {
+            Color.LightGray
+        },
         topBar = {
             TopBar(onTextChange = {
                 viewModel.setEvent(CoinListEvent.Search(it))
@@ -40,7 +52,9 @@ fun CoinListScreen(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(state.coins.filter { it.name.contains(state.search) }) { coin ->
@@ -50,13 +64,43 @@ fun CoinListScreen(
                     })
                 }
             }
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .align(Alignment.Center)
-                )
-            }
+
+            if (!listState.isScrollInProgress ){
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        onClick = {
+                            scope.launch { listState.animateScrollToItem(0) }
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        border = BorderStroke(width = 1.dp, color = Color.Red),
+                        color = Color.DarkGray.copy(alpha = 0.7f)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+
+                            ) {
+                            Icon(
+                                imageVector = Icons.Default.Upgrade,
+                                contentDescription = "",
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "UP")
+                        }
+                    }
+                }
+
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.Center)
+                    )
+                }
             if (!state.error.isNullOrEmpty()) {
                 Text(text = state.error)
             }

@@ -5,8 +5,9 @@ import com.example.coinpaprica.domain.models.Coin
 
 data class CoinListState(
     val isLoading: Boolean = false,
+    val isDark: Boolean = false,
     val error: String = "",
     val coins: List<Coin> = emptyList(),
     val filterCoins: List<Coin> = emptyList(),
-    val search : String = ""
+    val search: String = ""
 ) : State

@@ -1,24 +1,35 @@
 package com.example.coinpaprica.presantation.coin_list
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coinpaprica.base.BaseViewModel
 import com.example.coinpaprica.common.Results
+import com.example.coinpaprica.data.sensor.LightSensor
+import com.example.coinpaprica.data.sensor.MeasurableSensor
 import com.example.coinpaprica.domain.use_case.CoinUseCase
-import com.example.coinpaprica.domain.use_case.GetCoinsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CoinListViewModel @Inject constructor(
-    private val useCase: CoinUseCase
+    private val useCase: CoinUseCase,
+    private val lightSensor: MeasurableSensor
 ) : BaseViewModel<CoinListEvent, CoinListState, CoinListAction>() {
 
     init {
+        initSensor()
         getCoins()
+    }
+
+    private fun initSensor() {
+        lightSensor.startListening()
+        lightSensor.setOnSensorValuesChangedListener { values ->
+            val lux = values[0]
+            _state.value = _state.value.copy(
+                isDark = lux < 1000f
+            )
+        }
     }
 
     override fun createInitialState() = CoinListState()
@@ -36,20 +47,6 @@ class CoinListViewModel @Inject constructor(
         _state.value = _state.value.copy(
             search = text ?: ""
         )
-
-/*        text?.let {
-            val coins = _state.value.coins.filter {
-                it.name.contains(text)
-            }
-            _state.value = _state.value.copy(
-                search = text
-            )
-        } ?: run{
-            _state.value = _state.value.copy(
-                filterCoins = emptyList()
-            )
-        }*/
-
     }
 
     fun getCoins() {

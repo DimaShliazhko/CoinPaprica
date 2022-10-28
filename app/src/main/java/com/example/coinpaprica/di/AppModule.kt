@@ -1,8 +1,11 @@
 package com.example.coinpaprica.di
 
+import android.app.Application
 import com.example.coinpaprica.common.Constant.BASE_URL
 import com.example.coinpaprica.data.CoinApi
 import com.example.coinpaprica.data.repository.CoinRepositoryImpl
+import com.example.coinpaprica.data.sensor.LightSensor
+import com.example.coinpaprica.data.sensor.MeasurableSensor
 import com.example.coinpaprica.domain.repository.CoinRepository
 import com.example.coinpaprica.domain.use_case.CoinUseCase
 import com.example.coinpaprica.domain.use_case.GetCoinDetailUseCase
@@ -43,5 +46,11 @@ object AppModule {
             getCoinDetailUseCase = GetCoinDetailUseCase(coinRepository),
             getCoinsUseCase = GetCoinsUseCase(coinRepository),
         )
+    }
+
+    @Singleton
+    @Provides
+    fun provideLightSensor(app: Application): MeasurableSensor {
+       return LightSensor(app)
     }
 }
